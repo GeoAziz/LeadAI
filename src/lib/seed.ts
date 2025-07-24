@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc } from 'firebase/firestore';
 import { db } from './firebase';
 import { Lead } from './types';
 
@@ -17,10 +17,10 @@ export const seedDatabase = async () => {
     if (snapshot.empty) {
         console.log('Seeding database with initial leads...');
         const batch = writeBatch(db);
+        const leadsRef = collection(db, 'leads');
         mockLeads.forEach(lead => {
-            const docRef = collection(db, 'leads');
-            // Firestore will auto-generate an ID, so we pass the rest of the object
-            batch.set(docRef.doc(), lead);
+            const docRef = doc(leadsRef); // Create a new doc with a random ID in the 'leads' collection
+            batch.set(docRef, lead);
         });
         await batch.commit();
         console.log('Database seeded!');
