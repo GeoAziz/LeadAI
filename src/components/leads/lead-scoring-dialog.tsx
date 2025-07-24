@@ -13,7 +13,7 @@ type LeadScoringDialogProps = {
   lead: Lead;
   isOpen: boolean;
   onClose: () => void;
-  onNewScore: (leadId: number, newScore: number, newStatus: 'hot' | 'warm' | 'low') => void;
+  onNewScore: (leadId: string, newScore: number, newStatus: 'hot' | 'warm' | 'low') => void;
 };
 
 const statusColors = {

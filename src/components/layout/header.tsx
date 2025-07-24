@@ -1,15 +1,34 @@
+'use client';
+
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, User } from "lucide-react";
+import { Menu, User, LogOut } from "lucide-react";
 import Sidebar from "./sidebar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 function Clock() {
-    const now = new Date();
-    return <div className="font-code text-sm text-muted-foreground">{now.toUTCString()}</div>
+    const [time, setTime] = useState(new Date());
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setTime(new Date());
+        }, 1000);
+        return () => clearInterval(intervalId);
+    }, []);
+    return <div className="font-code text-sm text-muted-foreground">{time.toUTCString()}</div>
 }
 
 export default function Header() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/login');
+  }
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-md md:px-8 lg:justify-end">
       <Sheet>
@@ -41,12 +60,15 @@ export default function Header() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Operator One</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.email || 'Operator'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
       </div>

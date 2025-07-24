@@ -4,13 +4,13 @@ import { useState } from "react";
 import LeadCard from "./lead-card";
 import LeadScoringDialog from "./lead-scoring-dialog";
 import { Lead } from "@/lib/types";
+import { updateLeadScore } from "@/services/firestore";
 
 type LeadListProps = {
-    initialLeads: Lead[];
+    leads: Lead[];
 }
 
-export default function LeadList({ initialLeads }: LeadListProps) {
-    const [leads, setLeads] = useState(initialLeads);
+export default function LeadList({ leads }: LeadListProps) {
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -24,12 +24,8 @@ export default function LeadList({ initialLeads }: LeadListProps) {
         setSelectedLead(null);
     }
 
-    const handleNewScore = (leadId: number, newScore: number, newStatus: 'hot' | 'warm' | 'low') => {
-        setLeads(currentLeads =>
-            currentLeads.map(lead =>
-                lead.id === leadId ? { ...lead, score: newScore, status: newStatus } : lead
-            )
-        );
+    const handleNewScore = async (leadId: string, newScore: number, newStatus: 'hot' | 'warm' | 'low') => {
+        await updateLeadScore(leadId, newScore, newStatus);
          if (selectedLead?.id === leadId) {
             setSelectedLead(prev => prev ? { ...prev, score: newScore, status: newStatus } : null);
         }

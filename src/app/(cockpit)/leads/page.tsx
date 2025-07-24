@@ -1,22 +1,30 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import PageTitle from "@/components/page-title";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter, Search, Loader2 } from "lucide-react";
 import LeadList from "@/components/leads/lead-list";
-
-const mockLeads = [
-  { id: 1, name: "Stellar Solutions Inc.", score: 92, status: "hot", summary: "Seeking urgent deployment of AI chatbots for enterprise-level support. Budget >$50k.", campaign: "Q2 Enterprise Push", date: "2024-07-21" },
-  { id: 2, name: "Galaxy Widgets", score: 78, status: "warm", summary: "Interested in a demo for their e-commerce platform. Timeline is 3-6 months.", campaign: "E-commerce Outreach", date: "2024-07-20" },
-  { id: 3, name: "Cosmic Creations", score: 45, status: "low", summary: "Early stage inquiry about pricing. No defined budget or timeline.", campaign: "Inbound Organic", date: "2024-07-20" },
-  { id: 4, name: "Nebula Networks", score: 85, status: "hot", summary: "Ready to sign, waiting on final proposal for multi-site license.", campaign: "Q2 Enterprise Push", date: "2024-07-19" },
-  { id: 5, name: "Andromeda Apps", score: 65, status: "warm", summary: "Follow-up required next week. Decision maker on vacation.", campaign: "SaaS Growth", date: "2024-07-18" },
-];
+import { Lead } from '@/lib/types';
+import { useLeads } from '@/services/firestore';
+import { seedDatabase } from '@/lib/seed';
 
 export default function LeadsPage() {
+  const { leads, loading, error } = useLeads();
+  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
+
+  useEffect(() => {
+    setFilteredLeads(leads);
+  }, [leads]);
+  
   return (
     <div className="flex flex-col gap-8">
-      <PageTitle title="Lead Inbox / Data Feed" subtitle="Incoming signals from across the galaxy." />
+      <div className='flex justify-between items-start'>
+        <PageTitle title="Lead Inbox / Data Feed" subtitle="Incoming signals from across the galaxy." />
+        <Button onClick={seedDatabase} variant="outline">Seed Database</Button>
+      </div>
       
       <div className="flex items-center justify-between gap-4">
         <div className="relative w-full max-w-sm">
@@ -43,7 +51,13 @@ export default function LeadsPage() {
         </div>
       </div>
       
-      <LeadList initialLeads={mockLeads} />
+      {loading && (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      )}
+      {error && <p className="text-destructive text-center">{error}</p>}
+      {!loading && !error && <LeadList leads={filteredLeads} />}
     </div>
   );
 }

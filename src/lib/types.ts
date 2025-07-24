@@ -1,5 +1,5 @@
 export type Lead = {
-    id: number;
+    id: string;
     name: string;
     score: number;
     status: 'hot' | 'warm' | 'low';
