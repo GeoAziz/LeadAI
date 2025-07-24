@@ -25,9 +25,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex h-screen w-full items-center justify-center overflow-hidden">
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-y-auto p-4">
       <AnimatedBackground />
-      <div className="z-10 w-full max-w-md rounded-xl p-8 glassmorphism">
+      <div className="z-10 w-full max-w-md rounded-xl p-8 glassmorphism my-8">
         <div className="flex flex-col items-center justify-center text-center">
           <div className="relative mb-6 flex h-20 w-20 items-center justify-center">
             <Fingerprint className="z-10 h-16 w-16 text-primary" />
