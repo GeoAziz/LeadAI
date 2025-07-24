@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -8,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 function Clock() {
     const [time, setTime] = useState(new Date());
@@ -39,8 +41,8 @@ export default function Header() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col p-0">
-          <SheetHeader className="sr-only">
-            <SheetTitle>Navigation Menu</SheetTitle>
+          <SheetHeader>
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           </SheetHeader>
           <Sidebar isMobile />
         </SheetContent>
@@ -65,8 +67,8 @@ export default function Header() {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>{user?.email || 'Operator'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <Link href="/profile" passHref><DropdownMenuItem>Profile</DropdownMenuItem></Link>
+                <Link href="/settings" passHref><DropdownMenuItem>Settings</DropdownMenuItem></Link>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />

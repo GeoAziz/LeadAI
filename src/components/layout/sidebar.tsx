@@ -1,8 +1,9 @@
+
 'use client';
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bot, Calendar, LayoutDashboard, Settings, Target, BarChart, FileText, PieChart } from "lucide-react";
+import { Bot, Calendar, LayoutDashboard, Settings, Target, BarChart, FileText, PieChart, User } from "lucide-react";
 import Logo from "../logo";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
@@ -14,6 +15,7 @@ const navItems = [
   { href: "/analytics", icon: PieChart, label: "Analytics" },
   { href: "/chat-config", icon: Bot, label: "Chat Config" },
   { href: "/calendar", icon: Calendar, label: "Calendar" },
+  { href: "/profile", icon: User, label: "Profile" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
