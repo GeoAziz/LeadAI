@@ -20,16 +20,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const publicRoutes = ['/login', '/', '/chat-client'];
 
-// This is a mock user for test mode
-const mockUser = {
-  uid: 'test-user-uid',
-  email: 'test-operator@leadpilot.ai',
-  displayName: 'Test Operator',
-  photoURL: '',
-  emailVerified: true,
-} as User;
-
-
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,14 +27,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const pathname = usePathname();
 
   useEffect(() => {
-    // If test mode is enabled, bypass Firebase and set a mock user
-    if (process.env.NEXT_PUBLIC_TEST_MODE === 'true') {
-      setUser(mockUser);
-      setLoading(false);
-      return;
-    }
-    
-    // Otherwise, proceed with real Firebase authentication
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -54,8 +36,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
   
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_TEST_MODE === 'true') return;
-
     if (!loading) {
       if (user && (pathname === '/login' || pathname === '/')) {
         router.push('/dashboard');
@@ -76,11 +56,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
   
   const logout = () => {
-    if (process.env.NEXT_PUBLIC_TEST_MODE === 'true') {
-      setUser(null);
-      router.push('/login');
-      return Promise.resolve();
-    }
     return signOut(auth);
   };
 
@@ -99,7 +74,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   const isPublicPage = publicRoutes.includes(pathname);
 
-  // Show loading indicator while checking for user, unless in test mode on a public page
   if (loading && !isPublicPage) {
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -108,8 +82,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
   }
 
-  // If not a public page and not a user (and not in test mode), show loader while redirecting
-  if (!isPublicPage && !user && process.env.NEXT_PUBLIC_TEST_MODE !== 'true') {
+  if (!isPublicPage && !user) {
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
             <Loader2 className="h-16 w-16 animate-spin text-primary" />
