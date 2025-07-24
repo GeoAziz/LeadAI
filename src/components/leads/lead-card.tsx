@@ -1,19 +1,12 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Lead } from "@/lib/types";
 
-type Lead = {
-    id: number;
-    name: string;
-    score: number;
-    status: 'hot' | 'warm' | 'low';
-    summary: string;
-    campaign: string;
-    date: string;
-}
 
 type LeadCardProps = {
     lead: Lead;
+    onClick: () => void;
 }
 
 const statusColors = {
@@ -22,13 +15,16 @@ const statusColors = {
     low: "border-magenta-400 shadow-magenta-400/20",
 }
 
-export default function LeadCard({ lead }: LeadCardProps) {
+export default function LeadCard({ lead, onClick }: LeadCardProps) {
   return (
-    <Card className={cn(
-        "glassmorphism hover:border-primary transition-all duration-300 flex flex-col",
-        statusColors[lead.status],
-        "border-l-4 shadow-lg"
-    )}>
+    <Card 
+        className={cn(
+            "glassmorphism hover:border-primary transition-all duration-300 flex flex-col cursor-pointer",
+            statusColors[lead.status],
+            "border-l-4 shadow-lg"
+        )}
+        onClick={onClick}
+    >
         <CardHeader>
             <div className="flex justify-between items-start">
                 <CardTitle className="text-lg font-headline">{lead.name}</CardTitle>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ListFilter, Search } from "lucide-react";
-import LeadCard from "@/components/leads/lead-card";
+import LeadList from "@/components/leads/lead-list";
 
 const mockLeads = [
   { id: 1, name: "Stellar Solutions Inc.", score: 92, status: "hot", summary: "Seeking urgent deployment of AI chatbots for enterprise-level support. Budget >$50k.", campaign: "Q2 Enterprise Push", date: "2024-07-21" },
@@ -43,11 +43,7 @@ export default function LeadsPage() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {mockLeads.map(lead => (
-          <LeadCard key={lead.id} lead={lead} />
-        ))}
-      </div>
+      <LeadList initialLeads={mockLeads} />
     </div>
   );
 }
