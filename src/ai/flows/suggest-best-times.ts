@@ -4,31 +4,10 @@
  * @fileOverview An AI agent for suggesting the best times for scheduling meetings.
  *
  * - suggestBestTimes - A function that handles the process of suggesting optimal meeting times.
- * - SuggestBestTimesInput - The input type for the suggestBestTimes function.
- * - SuggestBestTimesOutput - The return type for the suggestBestTimes function.
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
-
-const SuggestBestTimesInputSchema = z.object({
-  calendarData: z
-    .string()
-    .describe(
-      'The user calendar data in iCalendar format.'
-    ),
-  meetingDurationMinutes: z.number().describe('The duration of the meeting in minutes.'),
-  timezone: z.string().describe('The timezone of the user.'),
-  workingHoursStart: z.string().describe('The start of the user working hours.'),
-  workingHoursEnd: z.string().describe('The end of the user working hours.'),
-});
-export type SuggestBestTimesInput = z.infer<typeof SuggestBestTimesInputSchema>;
-
-const SuggestBestTimesOutputSchema = z.object({
-  suggestedTimes: z.array(z.string()).describe('An array of suggested meeting times in ISO format.'),
-  reasoning: z.string().describe('The reasoning behind the suggested times.'),
-});
-export type SuggestBestTimesOutput = z.infer<typeof SuggestBestTimesOutputSchema>;
+import { SuggestBestTimesInputSchema, SuggestBestTimesOutputSchema, SuggestBestTimesInput, SuggestBestTimesOutput } from '@/ai/types';
 
 export async function suggestBestTimes(input: SuggestBestTimesInput): Promise<SuggestBestTimesOutput> {
   return suggestBestTimesFlow(input);

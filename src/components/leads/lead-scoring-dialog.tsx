@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { scoreLead, ScoreLeadOutput } from '@/ai/flows/score-lead-flow';
+import { scoreLead } from '@/ai/flows/score-lead-flow';
+import type { ScoreLeadOutput } from '@/ai/types';
 import { Loader2, Wand2, Star, TrendingUp, Info } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
