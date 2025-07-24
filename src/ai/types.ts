@@ -22,7 +22,7 @@ export const ScoreLeadOutputSchema = z.object({
 });
 export type ScoreLeadOutput = z.infer<typeof ScoreLeadOutputSchema>;
 
-const SuggestBestTimesInputSchema = z.object({
+export const SuggestBestTimesInputSchema = z.object({
   calendarData: z
     .string()
     .describe(
@@ -35,7 +35,7 @@ const SuggestBestTimesInputSchema = z.object({
 });
 export type SuggestBestTimesInput = z.infer<typeof SuggestBestTimesInputSchema>;
 
-const SuggestBestTimesOutputSchema = z.object({
+export const SuggestBestTimesOutputSchema = z.object({
   suggestedTimes: z.array(z.string()).describe('An array of suggested meeting times in ISO format.'),
   reasoning: z.string().describe('The reasoning behind the suggested times.'),
 });
