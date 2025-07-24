@@ -18,7 +18,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const publicRoutes = ['/login', '/'];
+const publicRoutes = ['/login', '/', '/chat-client'];
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   useEffect(() => {
     if (!loading) {
-      if (user && publicRoutes.includes(pathname)) {
+      if (user && (pathname === '/login' || pathname === '/')) {
         router.push('/dashboard');
       } else if (!user && !publicRoutes.includes(pathname)) {
         router.push('/login');
@@ -72,7 +72,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const value = { user, loading, login, signup, logout, sendPasswordReset, googleSignIn };
   
-  if (loading || (pathname !== '/login' && pathname !== '/' && !user) ) {
+  const isPublicPage = publicRoutes.includes(pathname);
+  if (loading && !isPublicPage) {
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
             <Loader2 className="h-16 w-16 animate-spin text-primary" />
@@ -80,6 +81,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
   }
 
+  if (!isPublicPage && !user) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center bg-background">
+            <Loader2 className="h-16 w-16 animate-spin text-primary" />
+        </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={value}>

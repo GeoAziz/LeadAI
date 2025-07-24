@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type Lead = {
     id: string;
     name: string;
@@ -7,3 +9,8 @@ export type Lead = {
     campaign: string;
     date: string;
 }
+
+export const MessageData = z.object({
+  role: z.enum(['user', 'assistant']),
+  content: z.string(),
+});
