@@ -2,18 +2,18 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { onAuthStateChanged, User, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { onAuthStateChanged, User, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, UserCredential } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Loader2 } from 'lucide-react';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, pass: string) => Promise<any>;
-  signup: (email: string, pass: string) => Promise<any>;
+  login: (email: string, pass: string) => Promise<UserCredential>;
+  signup: (email: string, pass: string) => Promise<UserCredential>;
   logout: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
-  googleSignIn: () => Promise<any>;
+  googleSignIn: () => Promise<UserCredential>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,27 +36,50 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
   
   useEffect(() => {
-    if (!loading) {
-      if (user && (pathname === '/login' || pathname === '/')) {
-        router.push('/dashboard');
-      } else if (!user && !publicRoutes.includes(pathname)) {
-        router.push('/login');
-      }
+    if (loading) return;
+
+    const isPublicPage = publicRoutes.includes(pathname);
+
+    if (user && isPublicPage) {
+      router.push('/dashboard');
+    } else if (!user && !isPublicPage) {
+      router.push('/login');
     }
   }, [user, loading, pathname, router]);
 
-  const login = (email: string, pass: string) => {
+  const handleAuthRedirect = (userCredential: UserCredential) => {
+    if (userCredential.user) {
+      setUser(userCredential.user); // Eagerly set user to trigger redirect
+      router.push('/dashboard');
+    }
+  };
+
+  const login = async (email: string, pass: string) => {
     setLoading(true);
-    return signInWithEmailAndPassword(auth, email, pass).finally(() => setLoading(false));
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+      handleAuthRedirect(userCredential);
+      return userCredential;
+    } finally {
+      setLoading(false);
+    }
   };
   
-  const signup = (email: string, pass: string) => {
+  const signup = async (email: string, pass: string) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, pass).finally(() => setLoading(false));
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      handleAuthRedirect(userCredential);
+      return userCredential;
+    } finally {
+      setLoading(false);
+    }
   };
   
-  const logout = () => {
-    return signOut(auth);
+  const logout = async () => {
+    await signOut(auth);
+    setUser(null);
+    router.push('/login');
   };
 
   const sendPasswordReset = (email: string) => {
@@ -64,10 +87,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return sendPasswordResetEmail(auth, email).finally(() => setLoading(false));
   }
 
-  const googleSignIn = () => {
+  const googleSignIn = async () => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider).finally(() => setLoading(false));
+    try {
+        const userCredential = await signInWithPopup(auth, provider);
+        handleAuthRedirect(userCredential);
+        return userCredential;
+    } finally {
+        setLoading(false);
+    }
   }
 
   const value = { user, loading, login, signup, logout, sendPasswordReset, googleSignIn };
@@ -81,14 +110,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         </div>
     );
   }
-
+  
+  // This check is important for protecting routes
   if (!isPublicPage && !user) {
     return (
-        <div className="flex h-screen w-full items-center justify-center bg-background">
-            <Loader2 className="h-16 w-16 animate-spin text-primary" />
-        </div>
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <p>Redirecting to login...</p>
+        <Loader2 className="h-16 w-16 animate-spin text-primary" />
+      </div>
     );
   }
+
 
   return (
     <AuthContext.Provider value={value}>
