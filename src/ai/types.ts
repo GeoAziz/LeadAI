@@ -40,3 +40,23 @@ export const SuggestBestTimesOutputSchema = z.object({
   reasoning: z.string().describe('The reasoning behind the suggested times.'),
 });
 export type SuggestBestTimesOutput = z.infer<typeof SuggestBestTimesOutputSchema>;
+
+
+export const SummarizeAndScoreLeadInputSchema = z.object({
+  rawText: z.string().describe("The raw, unsummarized text from a lead, such as an email or form submission."),
+});
+export type SummarizeAndScoreLeadInput = z.infer<typeof SummarizeAndScoreLeadInputSchema>;
+
+export const SummarizeAndScoreLeadOutputSchema = z.object({
+  summary: z.string().describe("A concise, one-sentence summary of the lead's request."),
+  score: z
+    .number()
+    .describe("A score from 1-100 representing the lead's potential value."),
+  status: z
+    .enum(['hot', 'warm', 'low'])
+    .describe('The classification of the lead.'),
+  reasoning: z
+    .string()
+    .describe('A brief explanation for the assigned score and status.'),
+});
+export type SummarizeAndScoreLeadOutput = z.infer<typeof SummarizeAndScoreLeadOutputSchema>;

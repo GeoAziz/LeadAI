@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bot, Calendar, LayoutDashboard, Settings, Target, BarChart } from "lucide-react";
+import { Bot, Calendar, LayoutDashboard, Settings, Target, BarChart, FileText, PieChart } from "lucide-react";
 import Logo from "../logo";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
@@ -10,6 +10,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/leads", icon: Target, label: "Leads" },
+  { href: "/summarize", icon: FileText, label: "Summarize" },
+  { href: "/analytics", icon: PieChart, label: "Analytics" },
   { href: "/chat-config", icon: Bot, label: "Chat Config" },
   { href: "/calendar", icon: Calendar, label: "Calendar" },
   { href: "/settings", icon: Settings, label: "Settings" },
